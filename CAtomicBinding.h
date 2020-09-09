@@ -1,6 +1,6 @@
 //
 //  CAtomicBinding.h
-//  
+//
 //
 //  Created by v on 2020/9/8.
 //  Copyright © 2020 lvv. All rights reserved.
@@ -138,22 +138,22 @@ static inline void CAtomicSignalFence(CAtomicMemoryOrder order) {
         return atomic_exchange_explicit(&_value, desired, (memory_order)order); \
     } \
     \
-    - (BOOL)CompareExchangeStrong:(type *)expected desired:(type)desired { \
+    - (BOOL)compareExchangeStrong:(type *)expected desired:(type)desired { \
         return atomic_compare_exchange_strong(&_value, expected, desired); \
     } \
     \
-    - (BOOL)CompareExchangeStrong:(type *)expected desired:(type)desired \
+    - (BOOL)compareExchangeStrong:(type *)expected desired:(type)desired \
                           success:(CAtomicMemoryOrder)success \
                           failure:(CAtomicMemoryOrder)failure { \
         return atomic_compare_exchange_strong_explicit(&_value, expected, desired, \
                                                        (memory_order)success, (memory_order)failure); \
     } \
     \
-    - (BOOL)CompareExchangeWeak:(type *)expected desired:(type)desired { \
+    - (BOOL)compareExchangeWeak:(type *)expected desired:(type)desired { \
         return atomic_compare_exchange_weak(&_value, expected, desired); \
     } \
     \
-    - (BOOL)CompareExchangeWeak:(type *)expected desired:(type)desired \
+    - (BOOL)compareExchangeWeak:(type *)expected desired:(type)desired \
                         success:(CAtomicMemoryOrder)success \
                         failure:(CAtomicMemoryOrder)failure { \
         return atomic_compare_exchange_weak_explicit(&_value, expected, desired, \
@@ -240,6 +240,107 @@ CATOMIC_DEFINE(CAtomicSizeT, size_t)
 CATOMIC_DEFINE(CAtomicPtrDiff, ptrdiff_t)
 CATOMIC_DEFINE(CAtomicIntMax, intmax_t)
 CATOMIC_DEFINE(CAtomicUIntMax, uintmax_t)
+
+#ifdef __cplusplus
+template <typename T>
+class CAtomic final {
+private:
+    _Atomic(T) _value;
+
+public:
+    CAtomic(T value) :_value(value) {}
+
+    BOOL isLockFree() {
+        return atomic_is_lock_free(&_value);
+    }
+
+    void store(T desired) {
+        atomic_store(&_value, desired);
+    }
+
+    void store(T desired, CAtomicMemoryOrder order) {
+        atomic_store_explicit(&_value, desired, (memory_order)order);
+    }
+
+    T load() {
+        return atomic_load(&_value);
+    }
+
+    T loadWithOrder(CAtomicMemoryOrder order) {
+        return atomic_load_explicit(&_value, (memory_order)order);
+    }
+
+    BOOL exchange(T desired) {
+        return atomic_exchange(&_value, desired);
+    }
+
+    BOOL exchange(T desired, CAtomicMemoryOrder order) {
+        return atomic_exchange_explicit(&_value, desired, (memory_order)order);
+    }
+
+    BOOL compareExchangeStrong(T * _Nonnull expected, T desired) {
+        return atomic_compare_exchange_strong(&_value, expected, desired);
+    }
+
+    BOOL compareExchangeStrong(T * _Nonnull expected, T desired,
+                               CAtomicMemoryOrder success,
+                               CAtomicMemoryOrder failure) {
+        return atomic_compare_exchange_strong_explicit(&_value, expected, desired,
+                                                       (memory_order)success, (memory_order)failure);
+    }
+
+    BOOL compareExchangeWeak(T * _Nonnull expected, T desired) {
+        return atomic_compare_exchange_weak(&_value, expected, desired);
+    }
+
+    BOOL compareExchangeWeak(T * _Nonnull expected, T desired,
+                             CAtomicMemoryOrder success,
+                             CAtomicMemoryOrder failure) {
+        return atomic_compare_exchange_weak_explicit(&_value, expected, desired,
+                                                     (memory_order)success, (memory_order)failure);
+    }
+
+    T fetchAdd(T operand) {
+        return atomic_fetch_add(&_value, operand);
+    }
+
+    T fetchAdd(T operand, CAtomicMemoryOrder order) {
+        return atomic_fetch_add_explicit(&_value, operand, (memory_order)order);
+    }
+
+    T fetchSub(T operand) {
+        return atomic_fetch_sub(&_value, operand);
+    }
+
+    T fetchSub(T operand, CAtomicMemoryOrder order) {
+        return atomic_fetch_sub_explicit(&_value, operand, (memory_order)order);
+    }
+
+    T fetchOr(T operand) {
+        return atomic_fetch_or(&_value, operand);
+    }
+
+    T fetchOr(T operand, CAtomicMemoryOrder order) {
+        return atomic_fetch_or_explicit(&_value, operand, (memory_order)order);
+    }
+
+    T fetchXor(T operand) {
+        return atomic_fetch_xor(&_value, operand);
+    }
+
+    T fetchXor(T operand, CAtomicMemoryOrder order) {
+        return atomic_fetch_xor_explicit(&_value, operand, (memory_order)order);
+    }
+
+    T fetchAnd(T operand) {
+        return atomic_fetch_and(&_value, operand);
+    }
+
+    T fetchAnd(T operand, CAtomicMemoryOrder order) {
+        return atomic_fetch_and_explicit(&_value, operand, (memory_order)order);
+    }
+};
+#endif
 
 NS_ASSUME_NONNULL_END
 
