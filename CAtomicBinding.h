@@ -52,15 +52,15 @@ static inline void CAtomicSignalFence(CAtomicMemoryOrder order) {
     \
     - (BOOL)exchange:(type)desired order:(CAtomicMemoryOrder)order; \
     \
-    - (BOOL)CompareExchangeStrong:(type *)expected desired:(type)desired; \
+    - (BOOL)compareExchangeStrong:(type *)expected desired:(type)desired; \
     \
-    - (BOOL)CompareExchangeStrong:(type *)expected desired:(type)desired \
+    - (BOOL)compareExchangeStrong:(type *)expected desired:(type)desired \
                           success:(CAtomicMemoryOrder)success \
                           failure:(CAtomicMemoryOrder)failure; \
     \
-    - (BOOL)CompareExchangeWeak:(type *)expected desired:(type)desired; \
+    - (BOOL)compareExchangeWeak:(type *)expected desired:(type)desired; \
     \
-    - (BOOL)CompareExchangeWeak:(type *)expected desired:(type)desired \
+    - (BOOL)compareExchangeWeak:(type *)expected desired:(type)desired \
                         success:(CAtomicMemoryOrder)success \
                         failure:(CAtomicMemoryOrder)failure; \
     \
